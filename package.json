@@ -1,0 +1,29 @@
+{
+  "name": "steem-account-reports",
+  "version": "0.0.1",
+  "description": "Web frontend for displaying user operations on steem blockchain",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aviz85/steem-account-reports.git"
+  },
+  "author": "aviz85",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aviz85/steem-account-reports/issues"
+  },
+  "homepage": "https://github.com/aviz85/steem-account-reports#readme",
+  "keywords": [
+    "steem"
+  ],
+  "dependencies": {
+    "config": "^1.29.4",
+    "express": "^4.16.2",
+    "q": "^1.5.1",
+    "socket.io": "^2.0.4",
+    "steem": "^0.7.1"
+  }
+}

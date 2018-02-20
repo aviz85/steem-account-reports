@@ -1,0 +1,23 @@
+{
+  "name": "steem-account-reports",
+  "description": "Web frontend for displaying user operations on steem blockchain",
+  "main": "server.js",
+  "authors": [
+    "aviz85"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "steem"
+  ],
+  "homepage": "https://github.com/aviz85/steem-account-reports",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.3.1"
+  }
+}
