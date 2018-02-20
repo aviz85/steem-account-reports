@@ -22,7 +22,9 @@ io.on('connection', function(client) {
     });
     client.on('query', function(data) {
 	console.log('query: '+data);
-	api.getAccountHistory(data).then(function(res){console.log(res);});	
+	api.getAccountHistory(data).then(function(res){
+		console.log('results',res);
+		client.emit('results',res);});	
 	
     });
 });

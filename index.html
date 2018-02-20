@@ -20,7 +20,7 @@
             socket.emit('join', 'Hello World from client');
         });
         socket.on('results', function(data) {
-            $('#results').html(data);
+            $('#results').html(JSON.stringify(data));
         });
 
         $('form').submit(function(e) {
