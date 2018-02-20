@@ -22,9 +22,9 @@ io.on('connection', function(client) {
     });
     client.on('query', function(data) {
 	console.log('query: '+data);
-	client.emit('results','test results...');
+	api.getAccountHistory(data).then(function(res){console.log(res);});	
+	
     });
-
 });
 
 server.listen(config.get('socket.port'), function(){

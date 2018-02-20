@@ -20,6 +20,7 @@
     "steem"
   ],
   "dependencies": {
+    "bluebird": "^3.5.1",
     "config": "^1.29.4",
     "express": "^4.16.2",
     "q": "^1.5.1",
