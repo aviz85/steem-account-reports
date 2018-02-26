@@ -5,6 +5,11 @@ var app = express();
 var server = require('http').createServer(app);  
 var io = require('socket.io')(server);
 
+var operations = ['transfer','curation_reward','producer_reward','author_reward','claim_reward_balance'];
+
+//var operations = ['producer_reward'];
+
+
 app.use(express.static(__dirname + '/bower_components'));  
 app.get('/', function(req, res,next) {  
     res.sendFile(__dirname + '/index.html');
@@ -22,7 +27,9 @@ io.on('connection', function(client) {
     });
     client.on('query', function(data) {
 	console.log('query: '+data);
-	api.getAccountHistory(data).then(function(res){
+	//api.getAccountHistory(data).then(function(res){
+	api.getOperations(data).then(function(res){		
+		res = res.filter(function(r){if (operations.indexOf(r.operation_type)>-1){return true;}else{ return false;}});
 		console.log('results',res);
 		client.emit('results',res);});	
 	

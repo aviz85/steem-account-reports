@@ -2,6 +2,12 @@
 <html lang="en">
 
 <head>
+	 <link rel="stylesheet" type="text/css" href="/dynatable/jquery.dynatable.css">
+	 <style>
+	 body{
+		background-color:#aaaaaa;
+	 }
+	 </style>
     <title>Welcome to STEEM account reports system!</title>
 </head>
 
@@ -11,8 +17,29 @@
         <input id="username" type="text">
         <input type="submit" value="Send">
     </form>
-    <div id="results"></div>
+    
+	<div id="results"></div>
+	
+	<table id="my-final-table">
+		<thead>
+			<th>timestamp</th>
+			<th>operation_type</th>
+			<th>reward</th>
+			<th>steem_payout</th>
+			<th>sbd_payout</th>
+			<th>vesting_payout</th>
+			<th>vesting_shares</th>
+			<th>amount</th>
+			<th>from</th>
+			<th>to</th>
+			<th>memo</th>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	
     <script src="/jquery/dist/jquery.js"></script>
+	<script src="/dynatable/jquery.dynatable.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io.connect();
@@ -20,7 +47,9 @@
             socket.emit('join', 'Hello World from client');
         });
         socket.on('results', function(data) {
-            $('#results').html(JSON.stringify(data));
+            //$('#results').html(JSON.stringify(data));
+			
+			$('#my-final-table').dynatable({dataset:{records:data}})
         });
 
         $('form').submit(function(e) {

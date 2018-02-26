@@ -22,7 +22,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "config": "^1.29.4",
-    "express": "^4.16.2",
+ "express": "^4.16.2",
     "q": "^1.5.1",
     "socket.io": "^2.0.4",
     "steem": "^0.7.1"
