@@ -16,11 +16,14 @@
     <form id="form" id="request_form">
         <input id="username" type="text">
         <input type="submit" value="Send">
-    </form>
-    
-	<div id="results"></div>
-	
-	<table id="my-final-table">
+		<select multiple name="ops">
+			<option value="vote">Vote</option>
+			<option value="comment">Comment / Post</option>
+			<option value="author_reward">Author Reward</option>
+			<option value="transfer">Transfer</option>
+		</select>
+    </form>  
+	<table id="results">
 		<thead>
 			<th>timestamp</th>
 			<th>operation_type</th>
@@ -37,25 +40,26 @@
 		<tbody>
 		</tbody>
 	</table>
-	
+	<div id="output"></div>
     <script src="/jquery/dist/jquery.js"></script>
 	<script src="/dynatable/jquery.dynatable.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io.connect();
-        socket.on('connect', function(data) {
-            socket.emit('join', 'Hello World from client');
-        });
-        socket.on('results', function(data) {
-            //$('#results').html(JSON.stringify(data));
-			
-			$('#my-final-table').dynatable({dataset:{records:data}})
-        });
 
         $('form').submit(function(e) {
             e.preventDefault();
             var query = $('#username').val();
-            socket.emit('query', query);
+            $.get('/api/v1/account/'+query+'?'+$('form').serialize(),function(res){
+				var resObj = JSON.parse(res);
+				
+				var dynatable = $('#results').dynatable({
+                dataset : {
+                    records : resObj
+                }
+            }).data('dynatable');
+
+             dynatable.settings.dataset.originalRecords = resObj;
+             dynatable.process();
+			});
         });
     </script>
 </body>
