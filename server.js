@@ -21,5 +21,5 @@ app.get('/config', function(req, res, next){
 app.use('/api/v1', api);
 
 server.listen(config.get('socket.port'), function(){
-	console.log('server: listening...');
+	console.log('server: listening on port ' + config.get('socket.port') + '...');
 });
