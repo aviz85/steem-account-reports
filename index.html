@@ -47,6 +47,7 @@
 		</select>
 		-->
     </form>  
+	<div id="loading">loading...</div>
 	<div class = "container">
 	<h2>Curation Reward</h2>
 	<div class="csv-link" id="curation-reward"></div>
@@ -113,11 +114,13 @@
     <script src="/jquery/dist/jquery.js"></script>
 	<script src="/dynatable/jquery.dynatable.js"></script>
     <script>
-
+		$(document).ready(function(){$('#loading').hide();});
         $('form').submit(function(e) {
             e.preventDefault();
+			$('#loading').show();
             var query = $('#username').val();
             $.get('/api/v1/account/'+query+'?'+$('form').serialize(),function(res){
+				$('#loading').hide();
 				var resObj = JSON.parse(res);
 				var records = {};
 				var r;
