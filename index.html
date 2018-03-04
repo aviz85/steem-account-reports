@@ -7,39 +7,108 @@
 	 body{
 		background-color:#aaaaaa;
 	 }
-	 </style>
+	</style>
+	<link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" />
+	<!-- Plugin styles -->
+	<link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/jquery.dynatable.css" />
+
+	<!--  jQuery v3.0.0-beta1 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
+
+	<!-- JS Pluging -->
+	<script type='text/javascript' src='https://s3.amazonaws.com/dynatable-docs-assets/js/jquery.dynatable.js'></script>
+
+
     <title>Welcome to STEEM account reports system!</title>
-</head>
+	<script>
+
+       function ConvertToCSV(objArray) {
+        const replacer = (key, value) => value === null ? '' : value; // specify how you want to handle null values here
+        const header = Object.keys(objArray[0]);
+        let csv = objArray.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+        csv.unshift(header.join(','));
+        csv = csv.join('\r\n');
+		return csv;
+        }
+		
+	</script>
+	</head>
 
 <body>
     <h1>Welcome to STEEM account reports system!</h1>
     <form id="form" id="request_form">
         <input id="username" type="text">
         <input type="submit" value="Send">
-		<select multiple name="ops">
+	<!--	<select multiple name="ops">
 			<option value="vote">Vote</option>
 			<option value="comment">Comment / Post</option>
 			<option value="author_reward">Author Reward</option>
 			<option value="transfer">Transfer</option>
 		</select>
+		-->
     </form>  
-	<table id="results">
+	<div class = "container">
+	<h2>Curation Reward</h2>
+	<div class="csv-link" id="curation-reward"></div>
+	<table class="results paleBlueRows table table-striped table-bordered" cellspacing="0" width="100%" id="curation-reward">
 		<thead>
 			<th>timestamp</th>
-			<th>operation_type</th>
 			<th>reward</th>
-			<th>steem_payout</th>
-			<th>sbd_payout</th>
-			<th>vesting_payout</th>
-			<th>vesting_shares</th>
-			<th>amount</th>
-			<th>from</th>
-			<th>to</th>
-			<th>memo</th>
+			<th>comment_author</th>
+			<th>comment_permlink</th>			
 		</thead>
 		<tbody>
-		</tbody>
+		</tbody>	
 	</table>
+<h2>Author Reward</h2>
+<div class="csv-link" id="author-reward"></div>
+	<table class="results paleBlueRows table table-striped table-bordered" cellspacing="0" width="100%" id="author-reward">
+		<thead>
+			<th>timestamp</th>
+			<th>sbd_payout</th>
+			<th>steem_payout</th>
+			<th>vesting_payout</th>			
+			<th>permlink</th>			
+		</thead>
+		<tbody>
+		</tbody>	
+	</table>
+<h2>Claimed Reward</h2>	
+<div class="csv-link" id="claimed-reward"></div>
+	<table class="results paleBlueRows table table-striped table-bordered" cellspacing="0" width="100%" id="claimed-reward">
+		<thead>
+			<th>timestamp</th>
+			<th>reward_steem</th>
+			<th>reward_sbd</th>
+			<th>reward_vests</th>			
+		</thead>
+		<tbody>
+		</tbody>	
+	</table>	
+<h2>Producer Reward</h2>	
+<div class="csv-link" id="producer-reward"></div>
+	<table class="results paleBlueRows table table-striped table-bordered" cellspacing="0" width="100%" id="producer-reward">
+		<thead>
+			<th>timestamp</th>
+			<th>vesting_shares</th>
+		</thead>
+		<tbody>
+		</tbody>	
+	</table>	
+<h2>Transfer</h2>	
+<div class="csv-link" id="transfer"></div>
+	<table class="results paleBlueRows table table-striped table-bordered" cellspacing="0" width="100%" id="transfer">
+		<thead>
+			<th>timestamp</th>
+			<th>from</th>
+			<th>to</th>
+			<th>amount</th>
+			<th>memo</th>			
+		</thead>
+		<tbody>
+		</tbody>	
+	</table>	
+	</div>
 	<div id="output"></div>
     <script src="/jquery/dist/jquery.js"></script>
 	<script src="/dynatable/jquery.dynatable.js"></script>
@@ -50,18 +119,109 @@
             var query = $('#username').val();
             $.get('/api/v1/account/'+query+'?'+$('form').serialize(),function(res){
 				var resObj = JSON.parse(res);
-				
-				var dynatable = $('#results').dynatable({
+				var records = {};
+				var r;
+				for(var i=0;i<resObj.length;i++){
+					if (r = records[resObj[i].operation_type]) r.push(resObj[i]);
+					else records[resObj[i].operation_type] = [resObj[i]];
+				}
+				console.log(records);
+//				var dynatable = 
+				$('.results#curation-reward').dynatable({
                 dataset : {
-                    records : resObj
+                    records : records.curation_reward
                 }
-            }).data('dynatable');
+            });
+			
+			csv = ConvertToCSV(records.curation_reward);
+			filename = query+'_curation_reward_'+(new Date()).getTime()+'.csv';
+			charset = "utf-8";
+			blob = new Blob([csv], {
+				 type: "text/csv;charset="+ charset + ";"
+			});
+			downloadLink = $('<a>Download CSV</a>').attr('href', window.URL.createObjectURL(blob))
+			.attr('download', filename)
+			.attr('target', '_blank')
+			$('div.csv-link#curation-reward').append(downloadLink); 
+			
+			
+			$('.results#author-reward').dynatable({
+                dataset : {
+                    records : records.author_reward
+                }
+            });
 
-             dynatable.settings.dataset.originalRecords = resObj;
-             dynatable.process();
+			csv = ConvertToCSV(records.author_reward);
+			filename = query+'_author_reward_'+(new Date()).getTime()+'.csv';
+			charset = "utf-8";
+			blob = new Blob([csv], {
+				 type: "text/csv;charset="+ charset + ";"
+			});
+			downloadLink = $('<a>Download CSV</a>').attr('href', window.URL.createObjectURL(blob))
+			.attr('download', filename)
+			.attr('target', '_blank')
+			$('div.csv-link#author-reward').append(downloadLink); 
+
+				$('.results#claimed-reward').dynatable({
+                dataset : {
+                    records : records.claim_reward_balance
+                }
+            });
+			
+			csv = ConvertToCSV(records.claim_reward_balance);
+			filename = query+'_claimed_reward_'+(new Date()).getTime()+'.csv';
+			charset = "utf-8";
+			blob = new Blob([csv], {
+				 type: "text/csv;charset="+ charset + ";"
+			});
+			downloadLink = $('<a>Download CSV</a>').attr('href', window.URL.createObjectURL(blob))
+			.attr('download', filename)
+			.attr('target', '_blank')
+			$('div.csv-link#claimed-reward').append(downloadLink); 
+
+				$('.results#producer-reward').dynatable({
+                dataset : {
+                    records : records.producer_reward
+                }
+            });
+			
+			csv = ConvertToCSV(records.producer_reward);
+			filename = query+'_producer_reward_'+(new Date()).getTime()+'.csv';
+			charset = "utf-8";
+			blob = new Blob([csv], {
+				 type: "text/csv;charset="+ charset + ";"
+			});
+			downloadLink = $('<a>Download CSV</a>').attr('href', window.URL.createObjectURL(blob))
+			.attr('download', filename)
+			.attr('target', '_blank')
+			$('div.csv-link#producer-reward').append(downloadLink); 
+			
+			
+				$('.results#transfer').dynatable({
+                dataset : {
+                    records : records.transfer
+                }
+            });
+			
+			
+			csv = ConvertToCSV(records.transfer);
+			filename = query+'_transfer_'+(new Date()).getTime()+'.csv';
+			charset = "utf-8";
+			blob = new Blob([csv], {
+				 type: "text/csv;charset="+ charset + ";"
+			});
+			downloadLink = $('<a>Download CSV</a>').attr('href', window.URL.createObjectURL(blob))
+			.attr('download', filename)
+			.attr('target', '_blank')
+			$('div.csv-link#transfer').append(downloadLink); 
+			
+
+//             dynatable.settings.dataset.originalRecords = resObj;
+             //dynatable.process();
 			});
         });
     </script>
+	
 </body>
 
 </html>
